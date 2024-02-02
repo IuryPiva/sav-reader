@@ -1,8 +1,8 @@
 import * as stream from "stream";
-import { IAsyncReader } from "./IAsyncReader.js";
+import { IAsyncReader } from "./IAsyncReader.ts";
 
 
-/** 
+/**
  * Read binary data from a Readable with simple async methods
  */
 export class AsyncReader extends IAsyncReader{
@@ -19,7 +19,7 @@ export class AsyncReader extends IAsyncReader{
         this.readable.on("readable", this._readableCallback.bind(this))
         //this.readable.on("error", (err) => { throw err });
         this.readable.on("end", this._endCallback.bind(this))
-                
+
         this.listener = null
         this.position = 0
         this.atEnd = false;
@@ -60,7 +60,7 @@ export class AsyncReader extends IAsyncReader{
      * @param len Number of bytes to read
      */
     async read(len): Promise<Buffer>{
-        
+
         return new Promise<Buffer>((resolve, reject) => {
 
             if (!this.readable.readable) {
@@ -69,10 +69,10 @@ export class AsyncReader extends IAsyncReader{
 
             let buf: Buffer = this.readable.read(len) as Buffer;
             if (!buf){
-                
+
                 // wait for more data to become available
                 this.listener = () => {
-                    
+
                     // data is available. try to read again
 
                     if (!this.readable.readable) {
@@ -98,7 +98,7 @@ export class AsyncReader extends IAsyncReader{
                 this.position += buf.length
                 resolve(buf);
             }
-            
+
         });
     }
 

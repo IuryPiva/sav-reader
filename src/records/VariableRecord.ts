@@ -1,12 +1,12 @@
-import { DisplayFormat } from "../DisplayFormat.js";
-import { SysVar, SysVarType } from "../SysVar.js";
+import { DisplayFormat } from "../DisplayFormat.ts";
+import { SysVar, SysVarType } from "../SysVar.ts";
 
 /**
  * Immediately following the header must come the variable records. There must be one
  * variable record for every variable and every 8 characters in a long string beyond
  * the first 8; i.e., there must be exactly as many variable records as the value
- * specified for case_size in the file header record. 
- * 
+ * specified for case_size in the file header record.
+ *
  */
 export class VariableRecord{
 
@@ -27,7 +27,7 @@ export class VariableRecord{
      * If the variable has no missing values, set to 0. If the variable has one, two, or
      * three discrete missing values, set to 1, 2, or 3, respectively. If the variable
      * has a range for missing variables, set to -2; if the variable has a range for
-     * missing variables plus a single discrete value, set to -3. 
+     * missing variables plus a single discrete value, set to -3.
      */
     n_missing_values: number;
 
@@ -92,7 +92,7 @@ export class VariableRecord{
         if (vrec.hasLabel) {
 
             // These field are present only if has_var_label is true
-            
+
             // The length, in characters, of the variable label, which must be a number between 0 and 120.
             let labelLen = await reader.readInt32();
 
@@ -155,7 +155,7 @@ export class VariableRecord{
         // name
         // this may later be re-named by a longvarname entry
         v.name = this.shortName;
-        
+
         // type
         if (this.type === 0) {
             v.type = SysVarType.numeric;
@@ -170,7 +170,7 @@ export class VariableRecord{
 
         // label
         v.label = this.label;
-        
+
         v.missing = this.missing;
         v.printFormat = this.printFormat;
         v.writeFormat = this.writeFormat;
@@ -186,7 +186,7 @@ export class VariableRecord{
 
     }
 
-        
+
 
 }
 

@@ -1,4 +1,4 @@
-import { DisplayFormat } from "./DisplayFormat.js";
+import { DisplayFormat } from "./DisplayFormat.ts";
 
 export const enum SysVarType{
     numeric,
@@ -35,7 +35,7 @@ export class SysVar{
      * For internal use when mapping valuelabels. Should find a better way to approach this.
      */
     __shortName: string;
-    
+
 }
 
 

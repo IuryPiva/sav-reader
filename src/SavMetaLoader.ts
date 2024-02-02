@@ -1,12 +1,12 @@
-import { DictionaryTerminationRecord } from "./records/DictionaryTerminationRecord.js";
-import { DocumentRecord } from "./records/DocumentRecord.js";
-import { HeaderRecord } from "./records/HeaderRecord.js";
-import { bytesToString, EncodingInfoRecord, InfoRecord, LongStringValueLabelsRecord, LongVarNameEntry, LongVarNamesInfoRecord, StringVarLengthEntry, SuperLongStringVarsRecord } from "./records/InfoRecord.js";
-import { InfoRecordSubType, RecordType } from "./records/RecordType.js";
-import { ValueLabelRecord } from "./records/ValueLabelRecord.js";
-import { VariableRecord } from "./records/VariableRecord.js";
-import { SavMeta } from "./SavMeta.js";
-import { SysVarType } from "./SysVar.js";
+import { DictionaryTerminationRecord } from "./records/DictionaryTerminationRecord.ts";
+import { DocumentRecord } from "./records/DocumentRecord.ts";
+import { HeaderRecord } from "./records/HeaderRecord.ts";
+import { bytesToString, EncodingInfoRecord, InfoRecord, LongStringValueLabelsRecord, LongVarNameEntry, LongVarNamesInfoRecord, StringVarLengthEntry, SuperLongStringVarsRecord } from "./records/InfoRecord.ts";
+import { InfoRecordSubType, RecordType } from "./records/RecordType.ts";
+import { ValueLabelRecord } from "./records/ValueLabelRecord.ts";
+import { VariableRecord } from "./records/VariableRecord.ts";
+import { SavMeta } from "./SavMeta.ts";
+import { SysVarType } from "./SysVar.ts";
 
 export class SavMetaLoader{
 
@@ -19,26 +19,26 @@ export class SavMetaLoader{
     static async readMeta(reader: any): Promise<SavMeta> {
 
         let meta = new SavMeta();
-        
+
 
         // read the header record
         meta.header = await HeaderRecord.read(reader);
 
         // keep most recent string for easy linking of string continuation vars
         let vrecs: VariableRecord[] = [];
-        let recent_string_vrec: VariableRecord = null; 
+        let recent_string_vrec: VariableRecord = null;
         let documentRecord: DocumentRecord;
         let longVariableNamesMap: LongVarNameEntry[];
         let longStringVarsMap: StringVarLengthEntry[] = null;
         let valueLabelsExt: LongStringValueLabelsRecord = null;
-        
+
         let done = false;
         do{
 
             const rec_type = await reader.peekInt();
 
             if( rec_type === RecordType.VariableRecord ){
-                
+
                 await reader.readInt32(); // consume peeked record type
 
                 const vrec = await VariableRecord.read(reader);
@@ -56,10 +56,10 @@ export class SavMetaLoader{
                     // a vrec type of 0 means numeric variable
                 }
                 vrecs.push(vrec);
-                
+
             }
             else if( rec_type === RecordType.ValueLabelRecord ){
-                
+
                 await reader.readInt32(); // consume peeked record type
 
                 // a value label record contains one set of value/label pairs and is attached to one or more variables
@@ -70,9 +70,9 @@ export class SavMetaLoader{
 
             }
             else if( rec_type === RecordType.DocumentRecord ){
-                
+
                 await reader.readInt32(); // consume peeked record type
-                    
+
                 // there should be only one document record per file
                 if( documentRecord != null ){
                     throw new Error("Multiple document records encountered");
@@ -81,7 +81,7 @@ export class SavMetaLoader{
 
             }
             else if( rec_type === RecordType.InfoRecord ){
-                
+
                 await reader.readInt32(); // consume peeked record type
 
                 // info record has many different subtypes
@@ -103,7 +103,7 @@ export class SavMetaLoader{
                 }
             }
             else if( rec_type === RecordType.DictionaryTerminationRecord ){
-                
+
                 await reader.readInt32(); // consume peeked record type
 
                 await DictionaryTerminationRecord.read(reader); // rec is discarded
@@ -113,7 +113,7 @@ export class SavMetaLoader{
                 // assume implicit dictionary termination
                 done = true;
             }
-            
+
 
         } while( !done );
 
@@ -129,7 +129,7 @@ export class SavMetaLoader{
         // link extra long string vars
         if( longStringVarsMap ){
             for( let entry of longStringVarsMap ){
-                
+
                 let sysvar = meta.sysvars.find(sv => sv.name === entry.name);
                 const varIndex = meta.sysvars.indexOf(sysvar);
 
@@ -150,7 +150,7 @@ export class SavMetaLoader{
             }
             meta.sysvars = meta.sysvars.filter(v => !v.__is_child_string_var);
         }
-        
+
         // lookup weight (important to do this before assigning long var names)
         if (meta.header.weightIndex) {
             const weight_vrec = vrecs[meta.header.weightIndex - 1];
@@ -180,7 +180,7 @@ export class SavMetaLoader{
                 ...(valueLabelsExt.sets)
             ]
         }
-        
+
         // adjust valuelabels map to refer to new names; also set proper entry values based on var type
         meta.valueLabels = meta.valueLabels.map(set => {
             var set2 = {...set};
@@ -193,8 +193,8 @@ export class SavMetaLoader{
                 // type is string, so vl entries should use string vals
                 set2.entries = set2.entries.map(entry => {
                     return {
-                        val: entry._valBytes ? 
-                            bytesToString(entry._valBytes)?.trimEnd() 
+                        val: entry._valBytes ?
+                            bytesToString(entry._valBytes)?.trimEnd()
                             : entry.val, // note: if record came from LongStringValueLabelsRecord it will already have been converted to a string
                         label: entry.label
                     }

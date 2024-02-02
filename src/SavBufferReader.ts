@@ -1,5 +1,5 @@
 import * as stream from "stream";
-import { SavReader } from "./SavReader.js";
+import { SavReader } from "./SavReader.ts";
 
 export class SavBufferReader extends SavReader{
 
@@ -8,7 +8,7 @@ export class SavBufferReader extends SavReader{
         super(readable);
     }
 
-    
+
 }
 
 

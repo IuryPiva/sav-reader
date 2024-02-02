@@ -1,8 +1,8 @@
-import { IAsyncReader } from "./IAsyncReader.js";
-import { IPeekableAsyncReader } from "./IPeekableAsyncReader.js";
+import { IAsyncReader } from "./IAsyncReader.ts";
+import { IPeekableAsyncReader } from "./IPeekableAsyncReader.ts";
 
 
-/** 
+/**
  * Layer on AsyncReader that reads in chunks to improve performance (especially if the Readable is a file stream)
  */
 export class AsyncChunkReader extends IPeekableAsyncReader{
@@ -19,12 +19,12 @@ export class AsyncChunkReader extends IPeekableAsyncReader{
         this.chunkSize = chunkSize;
         this.position = 0;
     }
-    
+
     readChunk = async (): Promise<void> => {
-        
+
         // read another chunk
         const buf = await this.reader.read(this.chunkSize);
-        
+
         // exclude the consumed portion of existing buffer
         const unused_buf = this.buffer ? this.buffer.slice(this.bufferPos) : null; // question: does this slice prevent dispose??
 
@@ -32,7 +32,7 @@ export class AsyncChunkReader extends IPeekableAsyncReader{
         this.buffer = unused_buf ? Buffer.concat([unused_buf, buf]) : buf;
         this.bufferPos = 0; // reset back to the start since we excluded consumed portion above wait
     }
-    
+
     isAtEnd() {
         if (this.buffer && (this.bufferPos < this.buffer.length))
             return false;

@@ -1,12 +1,12 @@
 import * as fs from "fs";
-import { SavReader } from "./SavReader.js";
+import { SavReader } from "./SavReader.ts";
 
 export class SavFileReader extends SavReader{
 
     filename: string;
 
     constructor(filename: string) {
-        
+
         const readable = fs.createReadStream(filename, {
             encoding: null,
             highWaterMark: 1024 * 1024 // 1024 kb

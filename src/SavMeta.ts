@@ -1,5 +1,5 @@
-import { ValueLabelRecord } from "./records/ValueLabelRecord.js";
-import { SysVar } from "./SysVar.js";
+import { ValueLabelRecord } from "./records/ValueLabelRecord.ts";
+import { SysVar } from "./SysVar.ts";
 
 /**
  * Metadata for sav file. Includes variable names, labels, valuelabels, encoding, etc.

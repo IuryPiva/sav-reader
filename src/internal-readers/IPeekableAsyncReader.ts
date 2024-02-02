@@ -1,4 +1,4 @@
-import { IAsyncReader } from "./IAsyncReader.js";
+import { IAsyncReader } from "./IAsyncReader.ts";
 
 
 export abstract class IPeekableAsyncReader extends IAsyncReader{

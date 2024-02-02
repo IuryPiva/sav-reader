@@ -1,15 +1,15 @@
 import * as stream from "stream";
-import { AsyncChunkReader } from "./internal-readers/AsyncChunkReader.js";
-import { AsyncReader } from "./internal-readers/AsyncReader.js";
-import { CommandReader } from "./internal-readers/CommandReader.js";
-import { SavIndexedRow } from "./SavIndexedRow.js";
-import { SavMeta } from "./SavMeta.js";
-import { SavMetaLoader } from "./SavMetaLoader.js";
-import { SysVarType } from "./SysVar.js";
+import { AsyncChunkReader } from "./internal-readers/AsyncChunkReader.ts";
+import { AsyncReader } from "./internal-readers/AsyncReader.ts";
+import { CommandReader } from "./internal-readers/CommandReader.ts";
+import { SavIndexedRow } from "./SavIndexedRow.ts";
+import { SavMeta } from "./SavMeta.ts";
+import { SavMetaLoader } from "./SavMetaLoader.ts";
+import { SysVarType } from "./SysVar.ts";
 
 const isValid = (x) => x !== null && x !== undefined;
 
-/** 
+/**
  * Reads schema and records from .sav file
  */
 export class SavReader{
@@ -28,7 +28,7 @@ export class SavReader{
      * Opens the file and loads all metadata (var names, labels, valuelabels, etc). Doesn't load any records.
      */
     async open() {
-        
+
         // check file rec_type
         // Record type code, either ‘$FL2’ for system files with uncompressed data or data
         // compressed with simple bytecode compression, or ‘$FL3’ for system files with
@@ -52,7 +52,7 @@ export class SavReader{
         this.meta = await SavMetaLoader.readMeta(this.reader);
 
         this.rowIndex = 0;
-        
+
     }
 
     async resetRows(){
@@ -76,7 +76,7 @@ export class SavReader{
         return rows;
 
     }
-    
+
     /** Read the next row of data */
     async readNextRow(includeNulls = false): Promise<any>{
 
@@ -111,7 +111,7 @@ export class SavReader{
                 for( let sv of all_sysvars ){
 
                     let varStr = "";
-                    
+
                     // read root
                     varStr += await this.reader.read8CharString(this.meta.header.compression);
 
@@ -129,7 +129,7 @@ export class SavReader{
                     // if( all_sysvars.length > 1 ){
                     //     str += "|";
                     // }
-                                
+
                 }
 
                 const strVal = str != null ? str.trimEnd() : null;
@@ -144,7 +144,7 @@ export class SavReader{
         return row;
 
     }
-   
+
 
 }
 

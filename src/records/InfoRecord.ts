@@ -1,5 +1,5 @@
-import { InfoRecordSubType } from "./RecordType.js";
-import { ValueLabelEntry, ValueLabelRecord } from "./ValueLabelRecord.js";
+import { InfoRecordSubType } from "./RecordType.ts";
+import { ValueLabelEntry, ValueLabelRecord } from "./ValueLabelRecord.ts";
 
 /**
  * Should this offer an encoding?
@@ -24,7 +24,7 @@ export class InfoRecord{
     static async read(reader): Promise<InfoRecord>{
 
         let rec = new InfoRecord();
-        
+
         rec.subType = await reader.readInt32();
         rec.size = await reader.readInt32();
         rec.count = await reader.readInt32();
@@ -40,7 +40,7 @@ export class InfoRecord{
             return rec;
         }
         else if( rec.subType === InfoRecordSubType.MultipleResponseSets ){
-            
+
             // multiple response sets
             // todo!
             //string str1 = System.Text.ASCIIEncoding.UTF8.GetString(bytedata);
@@ -65,7 +65,7 @@ export class InfoRecord{
             return rec;
         }
         else if( rec.subType === InfoRecordSubType.AuxilliaryVariableParameter ){
-            
+
             // auxilliary variable parameter (one per system file)
 
             // todo: this describes measurement, width, alignment for vars
@@ -73,7 +73,7 @@ export class InfoRecord{
             return rec;
         }
         else if( rec.subType === InfoRecordSubType.LongVariableNamesRecord ){
-            
+
             // long variable names record
             let longNameMap: LongVarNameEntry[] = [];
 
@@ -89,7 +89,7 @@ export class InfoRecord{
             let longVarNames = byteDataStr.trimEnd(); // System.Text.ASCIIEncoding.UTF8.GetString(bytedata);
             //let longVarNames = record.byteData.trimEnd(); // System.Text.ASCIIEncoding.UTF8.GetString(bytedata);
             //string longvarnames = System.Text.ASCIIEncoding.GetEncoding(1252).GetString(bytedata);
-            
+
 
             let pairs = longVarNames.split('\t');
             for( let p in pairs) {
@@ -137,7 +137,7 @@ export class InfoRecord{
                 }
                 let mapStr = byteDataStr?.trimEnd();
                 let mapStrArray = mapStr?.split("\0\t");
-                
+
                 for( let entryStr of mapStrArray ){
                     const pcs = entryStr.split('=');
                     const entry: StringVarLengthEntry = {
@@ -161,12 +161,12 @@ export class InfoRecord{
             return rec_exmap;
         }
         else if( rec.subType === InfoRecordSubType.EncodingRecord ){
-            
+
             let byteDataStr = byteData;
             if (typeof (byteDataStr) !== "string") {
                 byteDataStr = bytesToString(byteDataStr);
             }
-            
+
             const enc_rec: EncodingInfoRecord = {
                 ...rec,
                 encoding: byteDataStr.trimEnd()
@@ -178,7 +178,7 @@ export class InfoRecord{
             // UTF-7
             // UTF-8
             // UTF-32
-            
+
         }
         else if( rec.subType == InfoRecordSubType.StringVariableValueLabelsRecord ){
 
@@ -197,7 +197,7 @@ export class InfoRecord{
                 pos += 4;
 
                 // read var name
-                // note: this appears to be the long variable name. 
+                // note: this appears to be the long variable name.
                 // note: I don't know if could possibly be a comma-separated list of var names.
                 const var_name = getStringFromBuffer(byteData, pos, var_name_len);
                 pos += var_name_len;
@@ -234,12 +234,12 @@ export class InfoRecord{
                     vlset.entries.push({ val: value, label });
                 }
             }
-            
+
             return vlrec;
 
         }
         else{
-            
+
             // miscellaneous (unknown)
             // note: bytes were already read in
 
@@ -247,7 +247,7 @@ export class InfoRecord{
             // console.log("byteData", byteData);
             // const str = bytesToString(byteData);
             // console.log("byteData", str);
-            
+
             return rec;
 
         }
@@ -257,9 +257,9 @@ export class InfoRecord{
 }
 
 export class EncodingInfoRecord extends InfoRecord{
-    
+
     encoding: string;
-    
+
 }
 
 export class LongVarNameEntry{
@@ -268,9 +268,9 @@ export class LongVarNameEntry{
 }
 
 export class LongVarNamesInfoRecord extends InfoRecord{
-    
+
     longNameMap: LongVarNameEntry[];
-    
+
 }
 
 export class SuperLongStringVarsRecord extends InfoRecord{
@@ -292,7 +292,7 @@ export class StringVarLengthEntry{
     length: number;
 }
 
-const getIntFromBuffer = (buf, pos) => 
+const getIntFromBuffer = (buf, pos) =>
             (buf[pos + 0]) |
             (buf[pos + 1] << 8) |
             (buf[pos + 2] << 16) |

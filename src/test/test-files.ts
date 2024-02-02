@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import { SavFileReader } from "..";
 import { SysVarType } from "../SysVar";
-import { cc, eq, computeDescriptives } from "./TestHelpers.js";
+import { cc, eq, computeDescriptives } from "./TestHelpers.ts";
 
 let sampleFilesFolders = [
     process.env.SAMPLE_FILES_FOLDER,
@@ -371,7 +371,7 @@ const run = async () => {
 
         // run data checks
         if (tryLoadingAllFileData || test.data_check) {
-            
+
             console.log(`${cc.FgMagenta}reading data...${cc.Reset}`);
             const rowdata = await sav.readAllRows();
 
@@ -380,7 +380,7 @@ const run = async () => {
                 (rows, meta) => rows.length === meta.header.n_cases,
                 ...(test.data_check || [])
             ]
-                    
+
             for (let data_check of dchecks) {
                 try {
                     const res = data_check(rowdata, sav.meta);

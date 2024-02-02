@@ -1,4 +1,4 @@
-import { IPeekableAsyncReader } from "./IPeekableAsyncReader.js";
+import { IPeekableAsyncReader } from "./IPeekableAsyncReader.ts";
 
 
 export class CommandReader {
@@ -14,13 +14,13 @@ export class CommandReader {
     }
 
     close = (): void => this.reader.close();
-    
+
     getPosition = (): number => this.reader.getPosition();
 
     isAtEnd = (): boolean => this.reader.isAtEnd();
-    
+
     peek = async (len: number): Promise<Buffer> => await this.reader.peek(len);
-    
+
     async peekByte(): Promise<number> {
 
         // first check commandBuffer, but if it returns a zero ... find the first non-zero (temp workaround)
@@ -48,7 +48,7 @@ export class CommandReader {
             (buf[1] << 8) |
             (buf[2] << 16) |
             (buf[3] << 24));
-        
+
     }
 
     async readInt32(): Promise<number> {
@@ -71,7 +71,7 @@ export class CommandReader {
 
         var buf = await this.reader.read(8);
         if (buf.length !== 8) throw Error("not enough bytes read for Double");
-        
+
         var ab = new ArrayBuffer(8);
         var bufView = new Uint8Array(ab);
         bufView[0] = buf[7];
@@ -86,7 +86,7 @@ export class CommandReader {
         let d = dv.getFloat64(0);
 
         return d;
-    
+
     }
 
     async getCommandCode(): Promise<number>{
@@ -103,18 +103,18 @@ export class CommandReader {
         this.commandPointer++;
         if (this.commandPointer === 8)
             this.commandPointer = 0;
-        
+
         return code;
     }
 
     async readDouble2(compression): Promise<number>{
         if (compression == null)
             return await this.readDouble();
-        
+
         let code = await this.getCommandCode();
         while (code === 0)
             code = await this.getCommandCode(); // huh? padding or something?
-        
+
         let d = null;
 
         if (code > 0 && code < 252 ){
@@ -135,7 +135,7 @@ export class CommandReader {
 
             // shouldn't get here!
             //d = null;
-            
+
         }
         else if (code === 255) {
             // system-missing
@@ -144,7 +144,7 @@ export class CommandReader {
             // ignore
         }
         else if (code === null) {
-            // ignore    
+            // ignore
         }
         else {
             throw new Error('unknown error reading compressed double. code is ' + code);
@@ -155,10 +155,10 @@ export class CommandReader {
     }
 
     async read8CharString(compression): Promise<string>{
-        
+
         if (compression == null)
             return await this.readString(8);
-        
+
         var code = await this.getCommandCode();
         while (code === 0)
             code = await this.getCommandCode();
@@ -198,7 +198,7 @@ export class CommandReader {
         return str;
 
     }
-    
+
 
     /**
      * WHAT ENCODING TO USE?

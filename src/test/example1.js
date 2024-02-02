@@ -1,4 +1,4 @@
-import { SavFileReader } from "../SavFileReader.js";
+import { SavFileReader } from "../SavFileReader.ts";
 
 // console coloring constants
 const cc = {
@@ -19,11 +19,11 @@ async function test1() {
     const sav = new SavFileReader(filename);
 
     await sav.open();
-    
+
     // print the header
     console.log(cc.FgMagenta + 'File Header:' + cc.Reset)
     console.log(sav.meta.header);
-    
+
     // print the vars
     console.log(cc.FgMagenta + 'Variables:' + cc.Reset)
     sav.meta.sysvars.map(x => {
@@ -63,7 +63,7 @@ async function test1() {
                 q1_frequencies[row.Q1] = (q1_frequencies[row.Q1] || 0) + 1;
             }
         }
-        
+
     } while( row != null );
 
     console.log(cc.FgMagenta + 'Frequencies:' + cc.Reset)
