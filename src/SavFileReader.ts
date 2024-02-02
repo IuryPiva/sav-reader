@@ -1,4 +1,4 @@
-import * as fs from "fs";
+import * as fs from "node:fs";
 import { SavReader } from "./SavReader.ts";
 
 export class SavFileReader extends SavReader{
